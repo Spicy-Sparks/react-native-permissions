@@ -53,6 +53,7 @@
 
 - (void)openPhotoPickerWithResolver:(RCTPromiseResolveBlock _Nonnull)resolve
                            rejecter:(RCTPromiseRejectBlock _Nonnull)reject {
+#if !(TARGET_OS_TV)
   if (@available(iOS 14.0, *)) {
     if ([PHPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite] != PHAuthorizationStatusLimited) {
       return reject(@"cannot_open_limited_picker", @"Photo library permission isn't limited", nil);
@@ -84,6 +85,9 @@
   } else {
     reject(@"cannot_open_limited_picker", @"Only available on iOS 14 or higher", nil);
   }
+#else
+    reject(@"cannot_open_limited_picker", @"Not available on tvOS", nil);
+#endif
 }
 
 @end

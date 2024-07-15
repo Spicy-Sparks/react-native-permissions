@@ -6,7 +6,10 @@ static NSString* SETTING_KEY = @"@RNPermissions:Requested";
 
 @interface RNPermissionHandlerFaceID()
 
+#if !(TARGET_OS_TV)
 @property (nonatomic, strong) LAContext *laContext;
+#endif
+
 @property (nonatomic, strong) void (^resolve)(RNPermissionStatus status);
 @property (nonatomic, strong) void (^reject)(NSError *error);
 
@@ -24,6 +27,7 @@ static NSString* SETTING_KEY = @"@RNPermissions:Requested";
 
 - (void)checkWithResolver:(void (^ _Nonnull)(RNPermissionStatus))resolve
                  rejecter:(void (^ _Nonnull)(NSError * _Nonnull))reject {
+#if !(TARGET_OS_TV)
   LAContext *context = [LAContext new];
   NSError *error;
 
@@ -49,10 +53,14 @@ static NSString* SETTING_KEY = @"@RNPermissions:Requested";
   }
 
   resolve(RNPermissionStatusAuthorized);
+#else
+  resolve(RNPermissionStatusNotAvailable);
+#endif
 }
 
 - (void)requestWithResolver:(void (^ _Nonnull)(RNPermissionStatus))resolve
                    rejecter:(void (^ _Nonnull)(NSError * _Nonnull))reject {
+#if !(TARGET_OS_TV)
   LAContext *context = [LAContext new];
   NSError *error;
 
@@ -85,10 +93,15 @@ static NSString* SETTING_KEY = @"@RNPermissions:Requested";
 
   // Hack to invalidate FaceID verification immediately after being requested
   [self performSelector:@selector(invalidateContext) withObject:self afterDelay:0.05];
+#else
+  resolve(RNPermissionStatusNotAvailable);
+#endif
 }
 
 - (void)invalidateContext {
+#if !(TARGET_OS_TV)
   [_laContext invalidate];
+#endif
 }
 
 - (void)onApplicationDidBecomeActive:(__unused NSNotification *)notification {
