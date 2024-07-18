@@ -1,6 +1,8 @@
 #import "RNPermissionHandlerFaceID.h"
 
+#if !(TARGET_OS_TV)
 #import <LocalAuthentication/LocalAuthentication.h>
+#endif
 
 static NSString* SETTING_KEY = @"@RNPermissions:Requested";
 
